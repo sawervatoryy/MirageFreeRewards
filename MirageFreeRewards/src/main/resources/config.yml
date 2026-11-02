@@ -1,0 +1,138 @@
+# ════════════════════════════════════════════════════════════════
+#   MirageFreeRewards — бесплатные награды (/free)
+#   Создано студией MirageStudio
+#   Автор: sawervatoryy
+#   Discord: https://discord.gg/dWPenZegK
+# ════════════════════════════════════════════════════════════════
+#
+# Форматы цвета в любом тексте:
+#   &f &7 &l ...                               — обычные цвета и стили
+#   &#RRGGBB                                   — HEX-цвет
+#   <gradient:#RRGGBB:#RRGGBB>Текст</gradient> — градиент (можно с &l)
+#   {primary} {secondary} ...                  — цвета темы (блок theme ниже)
+#
+# Вся палитра плагина берётся из блока theme: меняете его — меняется всё.
+# То же можно сделать прямо в игре: /free edit -> Настройки.
+
+theme:
+  primary: "&f"          # основной цвет (белый)
+  secondary: "#EE3F3F"   # дополнительный (красный)
+  accent: "#B33535"      # акцент (тёмно-красный)
+  bright: "#F72B2B"      # яркий красный (для выделений)
+  text: "&7"             # обычный текст
+  muted: "&8"            # приглушённый текст
+  error: "&c"            # ошибки
+
+# ───────────────────────── Меню /free ─────────────────────────
+menu:
+  title: "{primary}&lБесплатные награды"
+  rows: 5                      # 3..6 рядов
+  close-on-claim: false        # закрывать меню после получения награды
+
+  border:                      # рамка по краю меню
+    enabled: true
+    material: WHITE_STAINED_GLASS_PANE
+  filler:                      # заполнитель пустых слотов внутри
+    enabled: false
+    material: WHITE_STAINED_GLASS_PANE
+
+  info:                        # предмет-информация (по умолчанию слот 4)
+    enabled: true
+    slot: 4
+    material: NETHER_STAR
+    name: "<gradient:#FFFFFF:#EE3F3F>&lMirageFreeRewards</gradient>"
+    lore:
+      - "{text}Забирайте бесплатные награды,"
+      - "{text}пока они доступны!"
+      - ""
+      - "{muted}Создано студией {secondary}MirageStudio"
+      - "{muted}Автор: {accent}sawervatoryy"
+
+  close:                       # кнопка закрытия (slot -1 = по центру снизу)
+    slot: -1
+    material: BARRIER
+    name: "{error}Закрыть"
+    lore: []
+
+  # Оформление награды по состоянию. material пустой = иконка награды.
+  # Плейсхолдер: {remaining}
+  states:
+    ready:
+      material: ""
+      glow: true
+      lore:
+        - ""
+        - "{secondary}» {primary}Нажмите, чтобы забрать"
+    cooldown:
+      material: ""
+      glow: false
+      lore:
+        - ""
+        - "{accent}✖ {text}Доступно через {primary}{remaining}"
+    claimed:
+      material: ""
+      glow: false
+      lore:
+        - ""
+        - "{accent}✔ {text}Уже получено"
+    locked:
+      material: ""
+      glow: false
+      lore:
+        - ""
+        - "{error}✖ {text}Недоступно для вас"
+
+  # Добавляется к недоступным DONATE-наградам
+  donate-lock-lore:
+    - "{accent}★ {text}Награда для донатеров"
+
+# ───────────────────────── Анимации ─────────────────────────
+animation:
+  open:
+    enabled: true
+    style: SPIRAL              # SPIRAL | CENTER_OUT | ROWS
+    step-delay: 2              # тиков между шагами рамки
+    reveal-delay: 2            # тиков между появлением наград
+    head-material: RED_STAINED_GLASS_PANE   # «голова» бегущей волны
+  idle:                        # мерцание рамки, пока меню открыто
+    enabled: true
+    interval: 4                # тиков между кадрами
+    cycle:                     # материалы по кругу (подберите под свою палитру)
+      - WHITE_STAINED_GLASS_PANE
+      - WHITE_STAINED_GLASS_PANE
+      - WHITE_STAINED_GLASS_PANE
+      - RED_STAINED_GLASS_PANE
+      - RED_STAINED_GLASS_PANE
+
+# ───────────────────────── Звуки ─────────────────────────
+# Формат: "ключ-звука,громкость,высота". Пусто = без звука.
+sounds:
+  open: "block.chest.open,0.7,1.2"
+  tick: "block.note_block.hat,0.4,1.6"
+  reveal: "entity.experience_orb.pickup,0.5,1.4"
+  claim: "entity.player.levelup,0.8,1.3"
+  error: "entity.villager.no,0.7,1.0"
+  click: "ui.button.click,0.6,1.0"
+
+# ───────────────────────── Сообщения ─────────────────────────
+messages:
+  prefix: "{primary}&lFree &8» "
+  claimed: "{secondary}Вы получили награду {reward}{secondary}!"
+  cooldown: "{error}Награду {reward}{error} можно забрать через {primary}{remaining}{error}."
+  claimed-once: "{error}Награду {reward}{error} можно получить только один раз."
+  locked: "{error}Эта награда вам недоступна."
+  donate-locked: "{accent}Эта награда доступна только донатерам."
+  no-permission: "{error}У вас нет прав."
+  players-only: "{error}Только для игроков."
+  reloaded: "{secondary}Конфиг и награды перезагружены."
+  unknown-reward: "{error}Награда {primary}{id}{error} не найдена."
+  unknown-player: "{error}Игрок {primary}{player}{error} не найден."
+  reset-done: "{secondary}Данные получения наград сброшены."
+  give-done: "{secondary}Награда {primary}{id}{secondary} выдана игроку {primary}{player}{secondary}."
+  input-prompt: "{secondary}✎ {primary}{prompt}"
+  input-hint: "{muted}Напишите ответ в чат или {text}отмена{muted}, чтобы вернуться."
+  input-cancelled: "{text}Ввод отменён."
+  invalid-duration: "{error}Неверный формат. Примеры: {primary}1d 2h 30m{error}, {primary}3600{error}, {primary}once{error}, {primary}none{error}."
+  invalid-item: "{error}Неверный предмет. Формат: {primary}МАТЕРИАЛ:кол-во{error} или {primary}МАТЕРИАЛ:кол-во:Название"
+  icon-hint: "{text}Возьмите предмет курсором из инвентаря и кликните по иконке."
+  tested: "{secondary}Награда выдана вам для проверки."

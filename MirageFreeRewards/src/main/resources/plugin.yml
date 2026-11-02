@@ -1,0 +1,21 @@
+name: MirageFreeRewards
+version: 1.0.0
+main: ru.mirage.freerewards.MirageFreeRewards
+api-version: '1.21'
+authors: [sawervatoryy]
+website: https://discord.gg/dWPenZegK
+description: Free rewards (/free) with animated GUI and in-game editor. Created by MirageStudio.
+
+commands:
+  free:
+    description: Открыть меню бесплатных наград
+    usage: /free [edit|reload|reset|give|about]
+    aliases: [freerewards]
+
+permissions:
+  mirage.free.use:
+    description: Открывать меню /free
+    default: true
+  mirage.free.admin:
+    description: Редактор, reload, reset, give
+    default: op

@@ -1,0 +1,87 @@
+# Награды MirageFreeRewards. Редактируйте здесь или в игре: /free edit
+# ВНИМАНИЕ: при сохранении из игрового редактора файл перезаписывается (комментарии пропадут).
+#
+# type:       COMMAND | ITEM | DONATE
+# cooldown:   секунды; -1 = один раз; 0 = без ограничений
+# slot:       -1 = авто, либо номер слота (0..53)
+# permission: если указано, без права награда заблокирована
+# commands:   [console] (по умолчанию), [player], [message], [broadcast], [sound]
+#             плейсхолдеры: {player} {uuid}
+# items:      МАТЕРИАЛ:кол-во[:Название]
+
+rewards:
+  daily:
+    enabled: true
+    name: "{primary}&lЕжедневная награда"
+    icon: CHEST
+    slot: -1
+    type: COMMAND
+    cooldown: 86400
+    permission: ""
+    glow: false
+    lore:
+      - "{text}Забирайте раз в сутки."
+    commands:
+      - "[console] give {player} bread 16"
+      - "[message] {secondary}Приятного аппетита!"
+
+  kit:
+    enabled: true
+    name: "{secondary}&lНабор ресурсов"
+    icon: IRON_INGOT
+    slot: -1
+    type: ITEM
+    cooldown: 43200
+    permission: ""
+    glow: false
+    lore:
+      - "{text}Железо, еда и алмазы."
+    items:
+      - "IRON_INGOT:16"
+      - "COOKED_BEEF:12"
+      - "DIAMOND:2:{secondary}Алмаз удачи"
+
+  weekly:
+    enabled: true
+    name: "{accent}&lЕженедельная награда"
+    icon: ENDER_CHEST
+    slot: -1
+    type: COMMAND
+    cooldown: 604800
+    permission: ""
+    glow: false
+    lore:
+      - "{text}Раз в неделю."
+    commands:
+      - "[console] give {player} golden_apple 3"
+      - "[broadcast] {secondary}{player}{primary} забрал недельную награду!"
+
+  vip:
+    enabled: true
+    name: "<gradient:#F72B2B:#B33535>&lVIP-награда</gradient>"
+    icon: NETHER_STAR
+    slot: -1
+    type: DONATE
+    cooldown: 86400
+    permission: mirage.free.vip
+    glow: true
+    lore:
+      - "{text}Для донатеров. Раз в сутки."
+    commands:
+      - "[console] give {player} diamond 5"
+      - "[console] give {player} experience_bottle 16"
+
+  welcome:
+    enabled: true
+    name: "{primary}&lСтартовый подарок"
+    icon: EMERALD
+    slot: -1
+    type: COMMAND
+    cooldown: -1
+    permission: ""
+    glow: false
+    lore:
+      - "{text}Только один раз."
+    commands:
+      - "[console] give {player} cooked_beef 32"
+      - "[sound] entity.player.levelup"
