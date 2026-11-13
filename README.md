@@ -1,6 +1,6 @@
 <div align="center">
 
-# MirageFreeRewards
+# MirageFreeReward's
 
 **Бесплатные награды `/free` с анимированным меню и редактором прямо в Minecraft**
 
