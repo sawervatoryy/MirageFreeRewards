@@ -1,6 +1,6 @@
 <div align="center">
 
-# MirageFreeReward's
+# MirageFreeRewards
 
 **Бесплатные награды `/free` с анимированным меню и редактором прямо в Minecraft**
 
@@ -215,7 +215,7 @@ src/main/java/ru/mirage/freerewards/
 
 <div align="center">
 
-**MirageFreeRewards** — создано студией **MirageStudio's**
+**MirageFreeRewards** — создано студией **MirageStudios**
 Автор: **sawervatoryy** · Discord: https://discord.gg/dWPenZegK
 
 </div>
