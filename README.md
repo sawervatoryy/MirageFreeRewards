@@ -215,7 +215,7 @@ src/main/java/ru/mirage/freerewards/
 
 <div align="center">
 
-**MirageFreeRewards** — создано студией **MirageStudio**
+**MirageFreeRewards** — создано студией **MirageStudio's**
 Автор: **sawervatoryy** · Discord: https://discord.gg/dWPenZegK
 
 </div>
