@@ -16,7 +16,8 @@ import java.util.List;
 
 /** Настройки меню, анимаций и цветовой темы прямо в игре. */
 public final class SettingsEditor implements Menu {
-    private static final String[] STYLES = {"SPIRAL", "CENTER_OUT", "ROWS"};
+    private static final String[] STYLES = {"SPIRAL", "CENTER_OUT", "EDGES_IN", "ROWS", "COLUMNS", "DIAGONAL", "SNAKE", "RANDOM"};
+    private static final String[] IDLE_STYLES = {"CYCLE", "PULSE", "COMET"};
 
     private final MirageFreeRewards plugin;
     private final Player player;
@@ -48,15 +49,27 @@ public final class SettingsEditor implements Menu {
                 "{primary}ЛКМ {muted}- {text}+1", "{primary}ПКМ {muted}- {text}-1", "{muted}от 3 до 6"), false));
         inv.setItem(12, toggle("Анимация открытия", c.getBoolean("animation.open.enabled", true)));
         inv.setItem(13, Items.make(Material.ARROW, "{primary}Стиль анимации: {secondary}" + c.getString("animation.open.style", "SPIRAL"),
-                List.of("{muted}SPIRAL / CENTER_OUT / ROWS", "", "{primary}Клик {muted}- {text}переключить"), false));
+                styleLore(STYLES, c.getString("animation.open.style", "SPIRAL")), false));
         inv.setItem(14, toggle("Мерцание рамки", c.getBoolean("animation.idle.enabled", true)));
         inv.setItem(15, toggle("Закрывать после получения", c.getBoolean("menu.close-on-claim", false)));
+        inv.setItem(16, toggle("Мигание готовых наград", c.getBoolean("animation.ready.enabled", true)));
+        inv.setItem(17, toggle("Волна при получении", c.getBoolean("animation.claim.enabled", true)));
 
         inv.setItem(19, color(Material.WHITE_DYE, "Основной цвет", "primary", "{primary}"));
         inv.setItem(20, color(Material.RED_DYE, "Дополнительный цвет", "secondary", "{secondary}"));
         inv.setItem(21, color(Material.PINK_DYE, "Акцентный цвет", "accent", "{accent}"));
         inv.setItem(22, color(Material.LIGHT_GRAY_DYE, "Цвет текста", "text", "{text}"));
+        inv.setItem(23, Items.make(Material.SPECTRAL_ARROW, "{primary}Стиль мерцания: {secondary}" + c.getString("animation.idle.style", "CYCLE"),
+                styleLore(IDLE_STYLES, c.getString("animation.idle.style", "CYCLE")), false));
         inv.setItem(26, Items.make(Material.ARROW, "{primary}« Назад", List.of(), false));
+    }
+
+    private static List<String> styleLore(String[] all, String cur) {
+        List<String> out = new java.util.ArrayList<>();
+        for (String s : all) out.add((s.equalsIgnoreCase(cur) ? "{secondary}» " : "{muted}  ") + s);
+        out.add("");
+        out.add("{primary}Клик {muted}- {text}переключить");
+        return out;
     }
 
     private org.bukkit.inventory.ItemStack toggle(String name, boolean on) {
@@ -111,6 +124,15 @@ public final class SettingsEditor implements Menu {
             }
             case 14 -> flip("animation.idle.enabled", true);
             case 15 -> flip("menu.close-on-claim", false);
+            case 16 -> flip("animation.ready.enabled", true);
+            case 17 -> flip("animation.claim.enabled", true);
+            case 23 -> {
+                String cur = c.getString("animation.idle.style", "CYCLE");
+                int idx = 0;
+                for (int i = 0; i < IDLE_STYLES.length; i++) if (IDLE_STYLES[i].equalsIgnoreCase(cur)) idx = i;
+                set("animation.idle.style", IDLE_STYLES[(idx + 1) % IDLE_STYLES.length]);
+                render();
+            }
             case 19 -> askColor("primary", "основной");
             case 20 -> askColor("secondary", "дополнительный");
             case 21 -> askColor("accent", "акцентный");

@@ -1,0 +1,401 @@
+# ============================================================
+#  MirageFreeRewards v0.1.1 — главное меню
+# ============================================================
+#  Это полноценный GUI-конфиг в стиле DeluxeMenus.
+#  Добавляйте свои предметы в items: и привязывайте награды
+#  через reward: или действия [claim] id.
+# ============================================================
+
+title: "{primary}✦ {base}<bold>БЕСПЛАТНЫЕ НАГРАДЫ</bold> {dark}• {muted}{player}"
+size: 54
+
+# Подложка всех слотов. Материал AIR отключает заполнение.
+fill:
+  material: BLACK_STAINED_GLASS_PANE
+  name: " "
+
+open-sound:
+  key: "block.ender_chest.open"
+  volume: 0.45
+  pitch: 1.15
+close-sound:
+  key: "ui.button.click"
+  volume: 0.25
+  pitch: 0.8
+
+# ============================================================
+#  АНИМАЦИЯ ОТКРЫТИЯ (v0.1.1: 16 кадров)
+#   0     — искры по углам
+#   1–9   — красная «змейка» бежит по рамке, звук растёт по тону
+#   10–12 — синее внутреннее кольцо
+#   13    — белая вспышка
+#   14–15 — рамка собирается и появляется звезда
+# ============================================================
+#  Кадр — это pattern из 6 строк по 9 символов.
+#  Символы берутся из palette; точка и пробел — пусто.
+#  Можно добавить items: {"0-8": {material: ...}} для точечных
+#  предметов поверх pattern.
+# ============================================================
+animation:
+  enabled: true
+  frame-delay: 2
+  skip-on-click: true
+  palette:
+    R:
+      material: RED_STAINED_GLASS_PANE
+      name: " "
+    D:
+      material: RED_CONCRETE
+      name: " "
+    B:
+      material: BLUE_STAINED_GLASS_PANE
+      name: " "
+    W:
+      material: WHITE_STAINED_GLASS_PANE
+      name: " "
+    S:
+      material: NETHER_STAR
+      name: "{base}✦ {primary}<bold>MirageFree</bold>"
+      lore:
+        - "{muted}Бесплатные награды"
+  start-sound:
+    key: "block.beacon.activate"
+    volume: 0.35
+    pitch: 1.5
+  finish-sound:
+    key: "entity.player.levelup"
+    volume: 0.55
+    pitch: 1.35
+  frames:
+    - pattern:
+        - "W.......W"
+        - "........."
+        - "........."
+        - "........."
+        - "........."
+        - "W.......W"
+      sound:
+        key: "block.note_block.pling"
+        volume: 0.2
+        pitch: 0.7
+    - pattern:
+        - "RWW......"
+        - "........."
+        - "........."
+        - "........."
+        - "........."
+        - "........."
+      sound:
+        key: "block.note_block.pling"
+        volume: 0.22
+        pitch: 0.8
+    - pattern:
+        - "RDRDWW..."
+        - "........."
+        - "........."
+        - "........."
+        - "........."
+        - "........."
+      sound:
+        key: "block.note_block.pling"
+        volume: 0.22
+        pitch: 0.91
+    - pattern:
+        - "RDRDRDRWW"
+        - "........."
+        - "........."
+        - "........."
+        - "........."
+        - "........."
+      sound:
+        key: "block.note_block.pling"
+        volume: 0.22
+        pitch: 1.02
+    - pattern:
+        - "RDRDRDRDR"
+        - "........D"
+        - "........W"
+        - "........W"
+        - "........."
+        - "........."
+      sound:
+        key: "block.note_block.pling"
+        volume: 0.22
+        pitch: 1.13
+    - pattern:
+        - "RDRDRDRDR"
+        - "........D"
+        - "........R"
+        - "........D"
+        - "........R"
+        - ".......WW"
+      sound:
+        key: "block.note_block.pling"
+        volume: 0.22
+        pitch: 1.24
+    - pattern:
+        - "RDRDRDRDR"
+        - "........D"
+        - "........R"
+        - "........D"
+        - "........R"
+        - "....WWDRD"
+      sound:
+        key: "block.note_block.pling"
+        volume: 0.22
+        pitch: 1.35
+    - pattern:
+        - "RDRDRDRDR"
+        - "........D"
+        - "........R"
+        - "........D"
+        - "........R"
+        - ".WWRDRDRD"
+      sound:
+        key: "block.note_block.pling"
+        volume: 0.22
+        pitch: 1.46
+    - pattern:
+        - "RDRDRDRDR"
+        - "........D"
+        - "........R"
+        - "W.......D"
+        - "W.......R"
+        - "DRDRDRDRD"
+      sound:
+        key: "block.note_block.pling"
+        volume: 0.22
+        pitch: 1.57
+    - pattern:
+        - "RDRDRDRDR"
+        - "W.......D"
+        - "W.......R"
+        - "D.......D"
+        - "R.......R"
+        - "DRDRDRDRD"
+      sound:
+        key: "block.note_block.pling"
+        volume: 0.22
+        pitch: 1.68
+    - pattern:
+        - "RDRDRDRDR"
+        - "DBBBBWW.D"
+        - "R.......R"
+        - "D.......D"
+        - "R.......R"
+        - "DRDRDRDRD"
+      sound:
+        key: "block.note_block.chime"
+        volume: 0.25
+        pitch: 1.1
+    - pattern:
+        - "RDRDRDRDR"
+        - "DBBBBBBBD"
+        - "R......BR"
+        - "D......BD"
+        - "R....WWBR"
+        - "DRDRDRDRD"
+      sound:
+        key: "block.note_block.chime"
+        volume: 0.25
+        pitch: 1.3
+    - pattern:
+        - "RDRDRDRDR"
+        - "DBBBBBBBD"
+        - "RW.....BR"
+        - "DW.....BD"
+        - "RBBBBBBBR"
+        - "DRDRDRDRD"
+      sound:
+        key: "block.note_block.chime"
+        volume: 0.25
+        pitch: 1.5
+    - pattern:
+        - "WWWWWWWWW"
+        - "WWWWWWWWW"
+        - "WW.....WW"
+        - "WW.....WW"
+        - "WWWWWWWWW"
+        - "WWWWWWWWW"
+      sound:
+        key: "entity.firework_rocket.twinkle"
+        volume: 0.4
+        pitch: 1.2
+    - pattern:
+        - "RDRDRDRDR"
+        - "D.......D"
+        - "R...S...R"
+        - "D.......D"
+        - "R.......R"
+        - "DRDRDRDRD"
+      sound:
+        key: "block.note_block.chime"
+        volume: 0.35
+        pitch: 1.4
+    - pattern:
+        - "RDRDRDRDR"
+        - "D.......D"
+        - "R..SSS..R"
+        - "D.......D"
+        - "R.......R"
+        - "DRDRDRDRD"
+
+items:
+
+  # ----------------------------------------------------------
+  #  Информационная звезда
+  # ----------------------------------------------------------
+  info:
+    slot: 4
+    material: NETHER_STAR
+    name: "{base}✦ {primary}<bold>MIRAGE FREE</bold> {dark}✦"
+    lore:
+      - "{muted}Бесплатные награды для каждого игрока."
+      - "{dark}▪ {base}Заходи каждый день и забирай подарки."
+      - "{dark}▪ {base}Следи за кулдаунами в меню."
+      - ""
+      - "{accent}» {base}Выбери награду ниже."
+    glow: true
+    click-sound:
+      key: "ui.button.click"
+      volume: 0.3
+      pitch: 1.4
+    click:
+      - "[message] {prefix}{base}MirageFree: {muted}бесплатные награды без покупок и голосований."
+
+  # ----------------------------------------------------------
+  #  Ежедневная награда
+  # ----------------------------------------------------------
+  daily:
+    slot: 20
+    material: CHEST
+    name: "{base}<bold>ЕЖЕДНЕВНАЯ</bold> {primary}НАГРАДА"
+    lore:
+      - "{muted}Лёгкий подарок на каждый день."
+      - ""
+      - "{base}Статус: {status}"
+      - "{base}Доступно: {primary}{cooldown}"
+      - "{base}Получено: {primary}{claims}{muted}/{limit}"
+      - "{base}Наиграно: {primary}%statistic_hours_played%{muted}/1 ч"
+      - ""
+      - "{primary}» {base}Нажми, чтобы забрать"
+    glow: true
+    reward: "daily"
+
+  # ----------------------------------------------------------
+  #  Еженедельная награда
+  # ----------------------------------------------------------
+  weekly:
+    slot: 22
+    material: ENDER_CHEST
+    name: "{base}<bold>ЕЖЕНЕДЕЛЬНАЯ</bold> {primary}НАГРАДА"
+    lore:
+      - "{muted}Больше ресурсов — больше возможностей."
+      - ""
+      - "{base}Статус: {status}"
+      - "{base}Доступно: {primary}{cooldown}"
+      - "{base}Получено: {primary}{claims}{muted}/{limit}"
+      - "{base}Наиграно: {primary}%statistic_hours_played%{muted}/5 ч"
+      - ""
+      - "{primary}» {base}Нажми, чтобы забрать"
+    glow: true
+    reward: "weekly"
+
+  # ----------------------------------------------------------
+  #  Ежемесячная награда
+  # ----------------------------------------------------------
+  monthly:
+    slot: 24
+    material: NETHERITE_INGOT
+    name: "{base}<bold>ЕЖЕМЕСЯЧНАЯ</bold> {primary}НАГРАДА"
+    lore:
+      - "{muted}Главный подарок месяца."
+      - ""
+      - "{base}Статус: {status}"
+      - "{base}Доступно: {primary}{cooldown}"
+      - "{base}Получено: {primary}{claims}{muted}/{limit}"
+      - "{base}Наиграно: {primary}%statistic_hours_played%{muted}/20 ч"
+      - ""
+      - "{primary}» {base}Нажми, чтобы забрать"
+    glow: true
+    reward: "monthly"
+
+  # ----------------------------------------------------------
+  #  Донат-бонус с проверкой права
+  # ----------------------------------------------------------
+  donator:
+    slot: 40
+    material: GOLD_INGOT
+    name: "{base}<bold>ДОНАТ-БОНУС</bold> {primary}VIP"
+    lore:
+      - "{muted}Особая благодарность донатерам."
+      - ""
+      - "{base}Статус: {status}"
+      - "{base}Получено: {primary}{claims}{muted}/{limit}"
+      - ""
+      - "{primary}» {base}Нажми, чтобы активировать"
+    glow: true
+    reward: "donator"
+    view-requirements:
+      permissions:
+        - "miragefree.reward.donator"
+      permission-message: "{prefix}{dark}Донат-бонус доступен только донатерам сервера."
+    locked:
+      material: BARRIER
+      name: "{dark}<bold>ЗАКРЫТО</bold>"
+      lore:
+        - "{muted}Эта награда для донатеров."
+        - "{dark}▪ {base}Поддержи проект и получи доступ."
+
+  # ----------------------------------------------------------
+  #  Профиль игрока
+  # ----------------------------------------------------------
+  profile:
+    slot: 45
+    material: PLAYER_HEAD
+    skull-owner: "{player}"
+    name: "{base}<bold>ПРОФИЛЬ</bold> {dark}• {muted}{player}"
+    lore:
+      - "{dark}▪ {base}Мир: {primary}{world}"
+      - "{dark}▪ {base}Онлайн: {primary}{online}{muted}/{max_players}"
+      - "{dark}▪ {base}Пинг: {primary}{ping} ms"
+      - ""
+      - "{muted}Твой прогресс сохраняется навсегда."
+    click:
+      - "[message] {prefix}{base}Твой профиль: {primary}{player}{base}, мир {primary}{world}{base}."
+
+  # ----------------------------------------------------------
+  #  Правила и подсказка
+  # ----------------------------------------------------------
+  rules:
+    slot: 53
+    material: BOOK
+    name: "{base}<bold>КАК ЭТО РАБОТАЕТ</bold>"
+    lore:
+      - "{dark}1. {base}Выбери награду в меню."
+      - "{dark}2. {base}Нажми по ней левой кнопкой."
+      - "{dark}3. {base}Забери подарок и возвращайся позже."
+      - ""
+      - "{muted}Кулдаун виден в описании награды."
+    click:
+      - "[message] {prefix}{base}Нажми на любую награду, чтобы получить её. Кулдаун обновляется автоматически."
+
+  # ----------------------------------------------------------
+  #  Кнопка закрытия
+  # ----------------------------------------------------------
+  close:
+    slot: 49
+    material: BARRIER
+    name: "{primary}<bold>ЗАКРЫТЬ</bold>"
+    lore:
+      - "{muted}Вернуться к игре."
+    click:
+      - "[close]"
+
+  # ----------------------------------------------------------
+  #  Красные акценты по краям
+  # ----------------------------------------------------------
+  border:
+    slot: "0,8,18,26,36,44,46,52"
+    material: RED_STAINED_GLASS_PANE
+    name: " "

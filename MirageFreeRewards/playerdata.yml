@@ -1,0 +1,8 @@
+# MirageFreeRewards — данные игроков.
+# Файл обновляется автоматически. Не редактируйте его при работающем сервере.
+players:
+  c7c592b7-6cb9-3080-8c12-faaba76ad70f:
+    donator:
+      last-claim: 1793413067161
+      claims: 1
+      period: never

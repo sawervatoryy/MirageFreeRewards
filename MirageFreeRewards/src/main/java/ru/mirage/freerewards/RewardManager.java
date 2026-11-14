@@ -19,7 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class RewardManager {
-    public enum State { READY, COOLDOWN, CLAIMED, LOCKED }
+    public enum State { READY, COOLDOWN, CLAIMED, LOCKED, REQUIREMENTS }
 
     /** Маркер неверного формата в parseDuration. */
     public static final long INVALID = Long.MIN_VALUE;
@@ -66,6 +66,16 @@ public final class RewardManager {
                 if (stacks != null) {
                     for (Object o : stacks) if (o instanceof ItemStack is) r.itemStacks.add(is);
                 }
+                for (Map<?, ?> mm : s.getMapList("requirements")) {
+                    Object ph = mm.get("placeholder");
+                    Object val = mm.get("value");
+                    if (ph == null || val == null) continue;
+                    Object op = mm.get("operator");
+                    Object msg = mm.get("message");
+                    r.requirements.add(new Requirement(String.valueOf(ph),
+                            op == null ? ">=" : String.valueOf(op).trim(),
+                            String.valueOf(val), msg == null ? "" : String.valueOf(msg)));
+                }
                 rewards.put(id, r);
             }
         }
@@ -89,6 +99,18 @@ public final class RewardManager {
             y.set(p + "commands", new ArrayList<>(r.commands));
             y.set(p + "items", new ArrayList<>(r.items));
             if (!r.itemStacks.isEmpty()) y.set(p + "item-stacks", new ArrayList<>(r.itemStacks));
+            if (!r.requirements.isEmpty()) {
+                List<Map<String, Object>> reqs = new ArrayList<>();
+                for (Requirement q : r.requirements) {
+                    Map<String, Object> mm = new LinkedHashMap<>();
+                    mm.put("placeholder", q.placeholder);
+                    mm.put("operator", q.operator);
+                    mm.put("value", q.value);
+                    if (!q.message.isBlank()) mm.put("message", q.message);
+                    reqs.add(mm);
+                }
+                y.set(p + "requirements", reqs);
+            }
         }
         try {
             y.save(rewardsFile);
@@ -138,10 +160,19 @@ public final class RewardManager {
     public State state(Player p, Reward r) {
         if (!r.permission.isBlank() && !p.hasPermission(r.permission)) return State.LOCKED;
         long last = lastClaim(p.getUniqueId(), r.id);
-        if (last <= 0) return State.READY;
-        if (r.cooldown < 0) return State.CLAIMED;
-        if (r.cooldown == 0) return State.READY;
-        return remaining(p, r) > 0 ? State.COOLDOWN : State.READY;
+        if (last > 0) {
+            if (r.cooldown < 0) return State.CLAIMED;
+            if (r.cooldown > 0 && remaining(p, r) > 0) return State.COOLDOWN;
+        }
+        return unmet(p, r).isEmpty() ? State.READY : State.REQUIREMENTS;
+    }
+
+    /** Невыполненные условия награды (например, не хватает часов игры). */
+    public List<Requirement> unmet(Player p, Reward r) {
+        if (r.requirements.isEmpty()) return List.of();
+        List<Requirement> out = new ArrayList<>();
+        for (Requirement q : r.requirements) if (!q.test(p)) out.add(q);
+        return out;
     }
 
     /** Секунды до следующего получения. */

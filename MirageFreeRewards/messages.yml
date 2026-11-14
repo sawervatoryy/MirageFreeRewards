@@ -1,0 +1,77 @@
+# ============================================================
+#  MirageFreeRewards v0.1.1 — сообщения
+# ============================================================
+#  Поддерживаются MiniMessage, &-коды, &#RRGGBB,
+#  &x&R&R&G&G&B&B, <#RRGGBB>, [COLOR=#RRGGBB] и JSON.
+#  Цвета темы: {base} {primary} {secondary} {dark}
+#              {background} {surface} {accent} {muted}
+# ============================================================
+
+prefix: "{primary}✦ {base}<bold>MirageFree</bold> {dark}» {base}"
+
+no-permission: "{prefix}{dark}У вас нет прав на это действие."
+player-only: "{prefix}{dark}Эта команда доступна только игрокам."
+plugin-not-ready: "{prefix}{dark}Плагин ещё не загрузился. Попробуйте позже."
+
+menu-not-found: "{prefix}{dark}Меню {base}{menu}{dark} не найдено."
+menu-open-cancelled: "{prefix}{dark}Открытие меню отменено."
+menu-error: "{prefix}{dark}Не удалось открыть меню. Сообщите администратору."
+world-disabled: "{prefix}{dark}В этом мире бесплатные награды отключены."
+
+reward-not-found: "{prefix}{dark}Награда {base}{reward_id}{dark} не найдена."
+reward-disabled: "{prefix}{dark}Эта награда временно отключена."
+reward-no-permission: "{prefix}{dark}Для получения этой награды нужна особая привилегия."
+requirements-failed: "{prefix}{dark}Условия получения награды не выполнены."
+cooldown: "{prefix}{base}Следующая награда будет доступна через {primary}{cooldown}{base}."
+limit-reached: "{prefix}{dark}Лимит получений этой награды исчерпан."
+claim-success: "{prefix}{base}Награда {primary}{reward}{base} получена!"
+claim-cancelled: "{prefix}{dark}Получение награды отменено."
+claim-partial: "{prefix}{dark}Награда выдана не полностью. Сообщите администратору."
+nothing-got: "{prefix}{dark}На этот раз удача не на вашей стороне — ничего не выпало."
+inventory-full: "{prefix}{dark}Инвентарь полон: предметы выпали рядом с вами."
+donation-failed: "{prefix}{dark}Награда выдана, но донат-команда не сработала. Сообщите администратору."
+
+player-not-found: "{prefix}{dark}Игрок {base}{player}{dark} не найден в сети."
+reload-success: "{prefix}{base}Конфигурация успешно перезагружена."
+reload-failed: "{prefix}{dark}Ошибка перезагрузки. Старые настройки сохранены, подробности в консоли."
+
+admin-open: "{prefix}{base}Меню {primary}{menu}{base} открыто для {primary}{player}{base}."
+admin-grant: "{prefix}{base}Награда {primary}{reward}{base} выдана игроку {primary}{player}{base}."
+admin-grant-failed: "{prefix}{dark}Не удалось выдать награду {base}{reward}{dark} игроку {base}{player}{dark}."
+admin-reset: "{prefix}{base}Сброшен кулдаун награды {primary}{reward_id}{base} у {primary}{player}{base}."
+admin-reset-all: "{prefix}{base}Все кулдауны игрока {primary}{player}{base} сброшены."
+admin-info: "{prefix}{base}MirageFreeRewards {primary}v{version}{dark} • {base}меню: {primary}{menus}{dark} • {base}наград: {primary}{rewards}{dark} • {base}игроков в базе: {primary}{players}{dark} • {base}файл: {primary}{data}"
+list-empty: "{prefix}{dark}В конфигурации нет наград."
+list-header: "{prefix}{base}Награды {dark}({count}){base}:"
+list-entry: "{dark}• {base}{reward_id} {dark}— {status}"
+list-entry-player: "{dark}• {base}{reward} {dark}— {status} {dark}| {base}{claims}{dark}/{limit}"
+
+help.free: |-
+  {prefix}{base}<bold>Бесплатные награды</bold>
+  {dark}▪ {base}/free {dark}— открыть меню наград
+  {dark}▪ {base}/free <меню> {dark}— открыть конкретное меню
+  {dark}▪ {base}/free help {dark}— эта справка
+help.admin: |-
+  {prefix}{base}<bold>Администрирование MirageFreeRewards</bold>
+  {dark}▪ {base}/mfr reload {dark}— перезагрузить все файлы
+  {dark}▪ {base}/mfr open <игрок> [меню] {dark}— открыть меню игроку
+  {dark}▪ {base}/mfr grant <игрок> <награда> {dark}— выдать награду в обход кулдауна
+  {dark}▪ {base}/mfr reset <игрок> [награда|all] {dark}— сбросить кулдаун
+  {dark}▪ {base}/mfr list [игрок] {dark}— список наград и статусов
+  {dark}▪ {base}/mfr info {dark}— информация о плагине
+
+status:
+  ready: "{base}Доступно"
+  cooldown: "{secondary}Кулдаун"
+  limit: "{secondary}Получено"
+  locked: "{dark}Закрыто"
+  requirements: "{dark}Не выполнено"
+  disabled: "{dark}Отключено"
+
+time:
+  ready: "сейчас"
+  never: "никогда"
+  day: "д"
+  hour: "ч"
+  minute: "м"
+  second: "с"

@@ -23,6 +23,8 @@ public final class Reward {
     public List<String> commands = new ArrayList<>();
     public List<String> items = new ArrayList<>();
     public List<ItemStack> itemStacks = new ArrayList<>();
+    /** Условия получения (плейсхолдер + оператор + значение), например наигранное время. */
+    public List<Requirement> requirements = new ArrayList<>();
 
     public Reward(String id) {
         this.id = id;

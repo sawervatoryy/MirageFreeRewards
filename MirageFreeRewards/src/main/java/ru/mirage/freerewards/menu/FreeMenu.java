@@ -12,8 +12,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import ru.mirage.freerewards.Colors;
+import ru.mirage.freerewards.Conditions;
 import ru.mirage.freerewards.Items;
 import ru.mirage.freerewards.MirageFreeRewards;
+import ru.mirage.freerewards.Placeholders;
+import ru.mirage.freerewards.Requirement;
 import ru.mirage.freerewards.Reward;
 import ru.mirage.freerewards.RewardManager;
 
@@ -24,6 +27,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -33,7 +37,7 @@ public final class FreeMenu implements Menu {
     private final Player player;
     private Inventory inv;
     private int rows, size, infoSlot, closeSlot;
-    private boolean ready, borderOn, fillerOn;
+    private boolean ready, borderOn, fillerOn, readyPulse, pulse = true;
     private Material borderMat, fillerMat;
     private BukkitTask task;
 
@@ -63,6 +67,7 @@ public final class FreeMenu implements Menu {
         fillerOn = c.getBoolean("menu.filler.enabled", false);
         borderMat = Items.material(c.getString("menu.border.material"), Material.WHITE_STAINED_GLASS_PANE);
         fillerMat = Items.material(c.getString("menu.filler.material"), Material.WHITE_STAINED_GLASS_PANE);
+        readyPulse = c.getBoolean("animation.ready.enabled", true);
 
         inv = Bukkit.createInventory(this, size, Colors.component(c.getString("menu.title", "{primary}Free")));
         layout();
@@ -156,16 +161,27 @@ public final class FreeMenu implements Menu {
         Material head = Items.material(c.getString("animation.open.head-material"), Material.RED_STAINED_GLASS_PANE);
 
         Map<Integer, Integer> step = new HashMap<>();
+        Random rnd = new Random();
+        final int maxCenter = centerDist(0);
         int maxStep = 0;
         for (int s : deco) {
             int st;
-            if (style.equals("ROWS")) {
-                st = s / 9;
-            } else if (style.equals("CENTER_OUT")) {
-                st = (int) Math.round(Math.abs(s % 9 - 4) + Math.abs(s / 9 - (rows - 1) / 2.0));
-            } else {
-                int idx = ring.indexOf(s);
-                st = idx >= 0 ? idx / 2 : ring.size() / 2;
+            switch (style) {
+                case "ROWS" -> st = s / 9;
+                case "COLUMNS" -> st = s % 9;
+                case "DIAGONAL" -> st = s / 9 + s % 9;
+                case "CENTER_OUT" -> st = centerDist(s);
+                case "EDGES_IN" -> st = maxCenter - centerDist(s);
+                case "RANDOM" -> st = rnd.nextInt(Math.max(6, rows * 3));
+                case "SNAKE" -> {
+                    int rw = s / 9;
+                    int cl = s % 9;
+                    st = (rw * 9 + (rw % 2 == 0 ? cl : 8 - cl)) / 3;
+                }
+                default -> {
+                    int idx = ring.indexOf(s);
+                    st = idx >= 0 ? idx / 2 : ring.size() / 2;
+                }
             }
             step.put(s, st);
             maxStep = Math.max(maxStep, st);
@@ -222,6 +238,8 @@ public final class FreeMenu implements Menu {
         FileConfiguration c = plugin.getConfig();
         final boolean idleOn = c.getBoolean("animation.idle.enabled", true) && borderOn;
         final int interval = Math.max(1, c.getInt("animation.idle.interval", 4));
+        final String idleStyle = c.getString("animation.idle.style", "CYCLE").toUpperCase(Locale.ROOT);
+        final Material comet = Items.material(c.getString("animation.idle.comet-material"), Material.RED_STAINED_GLASS_PANE);
         final List<Material> cycle = new ArrayList<>();
         for (String name : c.getStringList("animation.idle.cycle")) {
             Material m = Items.material(name, null);
@@ -238,21 +256,74 @@ public final class FreeMenu implements Menu {
                     return;
                 }
                 tick++;
-                if (idleOn && cycle.size() > 1) {
-                    for (int s : deco) {
-                        if (!isRing(s)) continue;
-                        int idx = ring.indexOf(s);
-                        if (idx < 0) continue;
-                        inv.setItem(s, Items.pane(cycle.get((idx + tick) % cycle.size())));
-                    }
-                }
+                if (idleOn) idleFrame(idleStyle, cycle, comet, tick);
                 acc += interval;
                 if (acc >= 20) {
                     acc = 0;
+                    pulse = !pulse;
                     refreshRewards();
                 }
             }
         }.runTaskTimer(plugin, interval, interval);
+    }
+
+    /** Кадр мерцания рамки: CYCLE (бегущий цикл), PULSE (вся рамка разом), COMET (комета с хвостом). */
+    private void idleFrame(String style, List<Material> cycle, Material comet, int tick) {
+        int n = ring.size();
+        for (int s : deco) {
+            if (!isRing(s)) continue;
+            int idx = ring.indexOf(s);
+            if (idx < 0) continue;
+            Material m;
+            switch (style) {
+                case "PULSE" -> m = cycle.isEmpty() ? borderMat : cycle.get((tick / 2) % cycle.size());
+                case "COMET" -> {
+                    int d = ((tick - idx) % n + n) % n;
+                    m = d < 3 ? comet : borderMat;
+                }
+                default -> {
+                    if (cycle.size() < 2) return;
+                    m = cycle.get((idx + tick) % cycle.size());
+                }
+            }
+            inv.setItem(s, Items.pane(m));
+        }
+    }
+
+    private int centerDist(int s) {
+        return (int) Math.round(Math.abs(s % 9 - 4) + Math.abs(s / 9 - (rows - 1) / 2.0));
+    }
+
+    /** Волна от кликнутой награды: расходится по свободным слотам и гаснет. */
+    private void claimWave(int origin) {
+        FileConfiguration c = plugin.getConfig();
+        if (!c.getBoolean("animation.claim.enabled", true)) return;
+        final Material mat = Items.material(c.getString("animation.claim.material"), Material.LIME_STAINED_GLASS_PANE);
+        final int oRow = origin / 9;
+        final int oCol = origin % 9;
+        final int last = (rows - 1) + 8 + 1;
+        new BukkitRunnable() {
+            int d = 0;
+
+            @Override
+            public void run() {
+                if (!valid()) {
+                    cancel();
+                    return;
+                }
+                for (int s = 0; s < size; s++) {
+                    if (s == infoSlot || s == closeSlot || slotMap.containsKey(s)) continue;
+                    int dist = Math.abs(s / 9 - oRow) + Math.abs(s % 9 - oCol);
+                    if (dist == d) {
+                        inv.setItem(s, Items.pane(mat));
+                    } else if (dist == d - 1) {
+                        inv.setItem(s, deco.contains(s) ? Items.pane(decoMaterial(s)) : null);
+                    }
+                }
+                d++;
+                if (d > last + 1) cancel();
+            }
+        }.runTaskTimer(plugin, 1L, 1L);
     }
 
     private void refreshRewards() {
@@ -274,13 +345,27 @@ public final class FreeMenu implements Menu {
             if (override != null) m = override;
             glow = glow || s.getBoolean("glow", false);
             lore.addAll(s.getStringList("lore"));
+        } else if (st == RewardManager.State.REQUIREMENTS) {
+            lore.add("");
+            lore.add("{accent}✖ {requirements}");
         }
+        if (readyPulse && st == RewardManager.State.READY) glow = pulse;
         if (r.type == Reward.Type.DONATE && st == RewardManager.State.LOCKED) {
             lore.addAll(c.getStringList("menu.donate-lock-lore"));
         }
         String remaining = RewardManager.formatDuration(plugin.rewards().remaining(player, r));
+        List<Requirement> unmet = st == RewardManager.State.REQUIREMENTS ? plugin.rewards().unmet(player, r) : List.of();
+        String playtime = null;
         List<String> out = new ArrayList<>();
         for (String l : lore) {
+            if (l.contains("{requirements}")) {
+                for (Requirement q : unmet) out.add(l.replace("{requirements}", q.text(plugin, player)));
+                continue;
+            }
+            if (l.contains("{playtime}")) {
+                if (playtime == null) playtime = Placeholders.resolve(player, Conditions.PLAYTIME);
+                l = l.replace("{playtime}", playtime);
+            }
             out.add(l.replace("{remaining}", remaining).replace("{player}", player.getName()).replace("{reward}", r.name));
         }
         return Items.make(m, r.name, out, glow);
@@ -311,6 +396,7 @@ public final class FreeMenu implements Menu {
                     plugin.sound(player, "claim");
                     plugin.send(player, "claimed", "{reward}", r.name);
                     inv.setItem(slot, rewardItem(r));
+                    claimWave(slot);
                     if (plugin.getConfig().getBoolean("menu.close-on-claim", false)) player.closeInventory();
                 }
             }
@@ -326,6 +412,10 @@ public final class FreeMenu implements Menu {
             case LOCKED -> {
                 plugin.sound(player, "error");
                 plugin.send(player, r.type == Reward.Type.DONATE ? "donate-locked" : "locked");
+            }
+            case REQUIREMENTS -> {
+                plugin.sound(player, "error");
+                for (Requirement q : plugin.rewards().unmet(player, r)) plugin.sendText(player, q.text(plugin, player));
             }
         }
     }

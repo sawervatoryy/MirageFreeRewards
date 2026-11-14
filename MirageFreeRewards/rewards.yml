@@ -1,0 +1,204 @@
+# ============================================================
+#  MirageFreeRewards v0.1.1 — награды
+# ============================================================
+#  Одна награда = один набор действий. Действия выполняются
+#  по порядку; каждое может иметь chance (0..100) и delay (тики).
+#
+#  Типы действий:
+#    COMMAND  — команда от консоли или игрока
+#    ITEM     — выдача предмета (все поля как у предмета меню)
+#    DONATION — донат-привилегия: список консольных команд + сообщение
+#    MESSAGE  — сообщение игроку
+#    SOUND    — звук игроку
+#
+#  Кулдауны: 30s, 5m, 2h, 7d, 1w, 30d; можно "1d 12h".
+#  reset-period: never | daily | weekly | monthly
+#  max-claims: -1 = без лимита, 1 = одноразовая награда.
+#
+#  ТРЕБОВАНИЕ ПО НАИГРАННОМУ ВРЕМЕНИ (v0.1.1):
+#    Блок requirements.placeholders проверяется при каждом получении.
+#    %statistic_hours_played% — всего часов на сервере (целое число,
+#    нужно расширение Statistic: /papi ecloud download Statistic).
+#    Чтобы изменить порог — поменяйте value. value: "0" — без ограничения.
+#    Операторы: >=  >  <=  <  ==  !=
+# ============================================================
+
+rewards:
+
+  daily:
+    enabled: true
+    display-name: "Ежедневная награда"
+    cooldown: "24h"
+    max-claims: -1
+    reset-period: never
+    # Требование: минимум 1 ч наигранного времени.
+    requirements:
+      placeholders:
+        - placeholder: "%statistic_hours_played%"
+          operator: ">="
+          value: "1"
+          message: "{prefix}{dark}Нужно наиграть минимум {base}1 ч{dark} на сервере."
+    claim-message: "{prefix}{base}Ты забрал {primary}Ежедневную награду{base}!"
+    claim-sound:
+      key: "entity.experience_orb.pickup"
+      volume: 0.7
+      pitch: 1.3
+    actions:
+      - type: COMMAND
+        command: "xp add {player} 150 points"
+        executor: CONSOLE
+      - type: ITEM
+        material: GOLDEN_APPLE
+        amount: 2
+        name: "{primary}<bold>Дар Миража</bold>"
+        lore:
+          - "{muted}Сочное яблоко из бесплатной награды."
+          - "{dark}▪ {base}Восстанавливает здоровье"
+        glow: true
+      - type: MESSAGE
+        message: "{prefix}{muted}Бонус дня: {base}+150 XP {muted}и {base}2 золотых яблока{muted}."
+
+  weekly:
+    enabled: true
+    display-name: "Еженедельная награда"
+    cooldown: "7d"
+    max-claims: -1
+    reset-period: never
+    # Требование: минимум 5 ч наигранного времени.
+    requirements:
+      placeholders:
+        - placeholder: "%statistic_hours_played%"
+          operator: ">="
+          value: "5"
+          message: "{prefix}{dark}Нужно наиграть минимум {base}5 ч{dark} на сервере."
+    claim-message: "{prefix}{base}Ты забрал {primary}Еженедельную награду{base}!"
+    claim-sound:
+      key: "entity.player.levelup"
+      volume: 0.8
+      pitch: 1.0
+    actions:
+      - type: COMMAND
+        command: "xp add {player} 3 levels"
+        executor: CONSOLE
+      - type: ITEM
+        material: DIAMOND
+        amount: 16
+        name: "{base}<bold>Алмазная неделя</bold>"
+        lore:
+          - "{muted}Награда за верность серверу."
+        glow: true
+      - type: ITEM
+        material: ENCHANTED_GOLDEN_APPLE
+        amount: 1
+        name: "{primary}<bold>Золотое сердце</bold>"
+        lore:
+          - "{muted}Редкий подарок недели."
+        glow: true
+
+  monthly:
+    enabled: true
+    display-name: "Ежемесячная награда"
+    cooldown: "30d"
+    max-claims: -1
+    reset-period: never
+    # Требование: минимум 20 ч наигранного времени.
+    requirements:
+      placeholders:
+        - placeholder: "%statistic_hours_played%"
+          operator: ">="
+          value: "20"
+          message: "{prefix}{dark}Нужно наиграть минимум {base}20 ч{dark} на сервере."
+    claim-message: "{prefix}{base}Ты забрал {primary}Ежемесячную награду{base}!"
+    claim-sound:
+      key: "ui.toast.challenge_complete"
+      volume: 0.8
+      pitch: 1.0
+    actions:
+      - type: ITEM
+        material: NETHERITE_INGOT
+        amount: 2
+        name: "{primary}<bold>Незеритовый запас</bold>"
+        lore:
+          - "{muted}Награда за целый месяц с нами."
+        glow: true
+      - type: ITEM
+        material: ELYTRA
+        amount: 1
+        name: "{secondary}<bold>Крылья Миража</bold>"
+        lore:
+          - "{muted}Свобода в каждом взмахе."
+          - "{dark}▪ {base}Прочность: полная"
+        unbreakable: true
+        glow: true
+      - type: COMMAND
+        command: "xp add {player} 10 levels"
+        executor: CONSOLE
+
+  donator:
+    enabled: true
+    display-name: "Донат-бонус"
+    # Награда доступна только тем, у кого есть это право.
+    # Выдайте его донатерам через LuckPerms или ваш магазин.
+    permission: "miragefree.reward.donator"
+    cooldown: "0"
+    max-claims: 1
+    reset-period: never
+    claim-message: "{prefix}{base}Донат-бонус активирован. Спасибо за поддержку сервера!"
+    claim-sound:
+      key: "ui.toast.challenge_complete"
+      volume: 1.0
+      pitch: 1.1
+    # Пример дополнительного требования по плейсхолдеру.
+    # requirements:
+    #   permission-message: "{prefix}{dark}Нужна привилегия донатера."
+    #   placeholders:
+    #     - placeholder: "%player_level%"
+    #       operator: ">="
+    #       value: "10"
+    #       message: "{prefix}{dark}Нужен 10-й уровень."
+    actions:
+      # DONATION — смысловая обёртка над консольными командами.
+      # Замените команду LuckPerms на команду вашего магазина/плагина.
+      - type: DONATION
+        name: "VIP"
+        commands:
+          - "lp user {player} parent add vip"
+        message: "{prefix}{base}Тебе выдана привилегия {primary}VIP{base}!"
+      - type: ITEM
+        material: GOLDEN_APPLE
+        amount: 8
+        name: "{primary}<bold>Подарок донатера</bold>"
+        lore:
+          - "{muted}Спасибо за поддержку проекта."
+        glow: true
+
+  # ==========================================================
+  #  ПРИМЕРЫ ДЛЯ КОПИРОВАНИЯ
+  # ==========================================================
+  # example_random:
+  #   enabled: false
+  #   display-name: "Случайный кейс"
+  #   cooldown: "12h"
+  #   actions:
+  #     - type: ITEM
+  #       material: DIAMOND
+  #       amount: 1
+  #       chance: 50
+  #     - type: COMMAND
+  #       command: "give {player} golden_apple 1"
+  #       chance: 50
+  #
+  # example_requirement:
+  #   enabled: true
+  #   display-name: "Награда за онлайн"
+  #   cooldown: "1d"
+  #   requirements:
+  #     permission-message: "{prefix}{dark}Сначала получите пропуск."
+  #     placeholders:
+  #       - placeholder: "%server_online%"
+  #         operator: ">="
+  #         value: "5"
+  #         message: "{prefix}{dark}Нужно минимум 5 игроков онлайн."
+  #   actions:
+  #     - type: COMMAND
+  #       command: "give {player} diamond 3"

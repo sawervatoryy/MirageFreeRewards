@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.mirage.freerewards.menu.Menu;
 
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -16,6 +17,11 @@ public final class MirageFreeRewards extends JavaPlugin {
     public static final String STUDIO = "MirageStudio";
     public static final String AUTHOR = "sawervatoryy";
     public static final String DISCORD = "https://discord.gg/dWPenZegK";
+
+    /** Запасные тексты для ключей, которых нет в старом config.yml. */
+    private static final Map<String, String> MESSAGE_DEFAULTS = Map.of(
+            "invalid-requirement", "{error}Неверное условие. Примеры: {primary}5{error} (часов игры) или {primary}%player_level% >= 10",
+            "invalid-hours", "{error}Введите число часов, например {primary}5{error}. {primary}0{error} или {primary}-{error} убирает требование.");
 
     private RewardManager rewards;
 
@@ -55,8 +61,13 @@ public final class MirageFreeRewards extends JavaPlugin {
 
     /** Сообщение из messages.<key> с префиксом; пары {плейсхолдер}, значение. */
     public void send(CommandSender to, String key, String... kv) {
-        String raw = getConfig().getString("messages." + key, key);
+        String raw = getConfig().getString("messages." + key, MESSAGE_DEFAULTS.getOrDefault(key, key));
         for (int i = 0; i + 1 < kv.length; i += 2) raw = raw.replace(kv[i], kv[i + 1]);
+        to.sendMessage(Colors.component(getConfig().getString("messages.prefix", "") + raw));
+    }
+
+    /** Готовый текст с префиксом (без поиска в messages). */
+    public void sendText(CommandSender to, String raw) {
         to.sendMessage(Colors.component(getConfig().getString("messages.prefix", "") + raw));
     }
 

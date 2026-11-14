@@ -81,6 +81,14 @@ menu:
       lore:
         - ""
         - "{error}✖ {text}Недоступно для вас"
+    # Не выполнены условия награды (например, мало наиграно часов).
+    # {requirements} — по одной строке на каждое невыполненное условие.
+    requirements:
+      material: ""
+      glow: false
+      lore:
+        - ""
+        - "{accent}✖ {requirements}"
 
   # Добавляется к недоступным DONATE-наградам
   donate-lock-lore:
@@ -90,19 +98,26 @@ menu:
 animation:
   open:
     enabled: true
-    style: SPIRAL              # SPIRAL | CENTER_OUT | ROWS
+    style: SPIRAL              # SPIRAL | CENTER_OUT | EDGES_IN | ROWS | COLUMNS | DIAGONAL | SNAKE | RANDOM
     step-delay: 2              # тиков между шагами рамки
     reveal-delay: 2            # тиков между появлением наград
     head-material: RED_STAINED_GLASS_PANE   # «голова» бегущей волны
   idle:                        # мерцание рамки, пока меню открыто
     enabled: true
     interval: 4                # тиков между кадрами
+    style: CYCLE               # CYCLE (бегущий цикл) | PULSE (вся рамка разом) | COMET (комета с хвостом)
+    comet-material: RED_STAINED_GLASS_PANE   # материал кометы для style: COMET
     cycle:                     # материалы по кругу (подберите под свою палитру)
       - WHITE_STAINED_GLASS_PANE
       - WHITE_STAINED_GLASS_PANE
       - WHITE_STAINED_GLASS_PANE
       - RED_STAINED_GLASS_PANE
       - RED_STAINED_GLASS_PANE
+  ready:                       # мигание свечения у наград, которые можно забрать
+    enabled: true
+  claim:                       # волна от награды при получении
+    enabled: true
+    material: LIME_STAINED_GLASS_PANE
 
 # ───────────────────────── Звуки ─────────────────────────
 # Формат: "ключ-звука,громкость,высота". Пусто = без звука.
@@ -136,3 +151,8 @@ messages:
   invalid-item: "{error}Неверный предмет. Формат: {primary}МАТЕРИАЛ:кол-во{error} или {primary}МАТЕРИАЛ:кол-во:Название"
   icon-hint: "{text}Возьмите предмет курсором из инвентаря и кликните по иконке."
   tested: "{secondary}Награда выдана вам для проверки."
+  # Условия наград. Токены: {value} {current} {placeholder} {operator}
+  requirement-playtime: "{text}Нужно наиграть {primary}{value} ч {text}(у вас {primary}{current} ч{text})"
+  requirement-generic: "{text}Условие: {primary}{placeholder} {operator} {value} {text}(сейчас {primary}{current}{text})"
+  invalid-requirement: "{error}Неверное условие. Примеры: {primary}5{error} (часов игры) или {primary}%player_level% >= 10"
+  invalid-hours: "{error}Введите число часов, например {primary}5{error}. {primary}0{error} или {primary}-{error} убирает требование."

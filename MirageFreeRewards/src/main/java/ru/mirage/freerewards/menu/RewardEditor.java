@@ -9,8 +9,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import ru.mirage.freerewards.ChatInput;
 import ru.mirage.freerewards.Colors;
+import ru.mirage.freerewards.Conditions;
 import ru.mirage.freerewards.Items;
 import ru.mirage.freerewards.MirageFreeRewards;
+import ru.mirage.freerewards.Requirement;
 import ru.mirage.freerewards.Reward;
 import ru.mirage.freerewards.RewardManager;
 
@@ -116,6 +118,18 @@ public final class RewardEditor implements Menu {
                 "{primary}Клик {muted}- {text}выбрать слот"), false));
         inv.setItem(22, Items.make(Material.GLOWSTONE_DUST, r.glow ? "{secondary}Свечение: вкл" : "{muted}Свечение: выкл",
                 List.of("{primary}Клик {muted}- {text}переключить"), false));
+        String hours = "нет";
+        for (Requirement q : r.requirements) if (q.isPlaytime()) hours = q.value + " ч";
+        inv.setItem(23, Items.make(Material.EXPERIENCE_BOTTLE, "{primary}Время игры", List.of(
+                "{text}Минимум: {primary}" + hours,
+                "{muted}Плейсхолдер " + Conditions.PLAYTIME, "",
+                "{primary}Клик {muted}- {text}изменить",
+                "{muted}Число часов; 0 или - чтобы убрать"), false));
+        List<String> reqLines = new ArrayList<>();
+        for (Requirement q : r.requirements) reqLines.add(q.describe());
+        inv.setItem(25, Items.make(Material.HOPPER, "{primary}Условия", join(preview(reqLines, "нет условий"),
+                "", "{primary}ЛКМ {muted}- {text}добавить", "{primary}ПКМ {muted}- {text}удалить последнее",
+                "{muted}Формат: %плейсхолдер% оператор значение"), false));
         inv.setItem(24, Items.make(Material.GOLD_NUGGET, "{accent}Выдать мне (тест)", List.of(
                 "{text}Выдаёт содержимое награды", "{text}без учёта кулдауна"), false));
         inv.setItem(40, Items.make(Material.ARROW, "{primary}« Назад", List.of(), false));
@@ -199,6 +213,32 @@ public final class RewardEditor implements Menu {
             case 22 -> {
                 r.glow = !r.glow;
                 saveRender();
+            }
+            case 23 -> ask("Введите минимум часов игры (число; 0 или - чтобы убрать)", t -> {
+                String v = t.trim();
+                if (v.equals("-") || v.equals("0")) {
+                    r.requirements.removeIf(Requirement::isPlaytime);
+                    return;
+                }
+                String[] a = Conditions.parse(v);
+                if (a == null || !a[0].equalsIgnoreCase(Conditions.PLAYTIME) || !a[1].equals(">=")) {
+                    plugin.send(player, "invalid-hours");
+                    return;
+                }
+                r.requirements.removeIf(Requirement::isPlaytime);
+                r.requirements.add(new Requirement(Conditions.PLAYTIME, ">=", a[2], ""));
+            });
+            case 25 -> {
+                if (right) {
+                    if (!r.requirements.isEmpty()) r.requirements.remove(r.requirements.size() - 1);
+                    saveRender();
+                } else {
+                    ask("Введите условие: %плейсхолдер% оператор значение, например %player_level% >= 10", t -> {
+                        Requirement q = Requirement.parse(t);
+                        if (q == null) plugin.send(player, "invalid-requirement");
+                        else r.requirements.add(q);
+                    });
+                }
             }
             case 24 -> {
                 plugin.rewards().deliver(player, r);

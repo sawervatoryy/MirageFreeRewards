@@ -8,6 +8,25 @@
 # commands:   [console] (по умолчанию), [player], [message], [broadcast], [sound]
 #             плейсхолдеры: {player} {uuid}
 # items:      МАТЕРИАЛ:кол-во[:Название]
+#
+# requirements: условия получения (необязательно). Награда доступна, только когда
+#             выполнены ВСЕ условия. Плейсхолдеры раскрываются через PlaceholderAPI
+#             (если она установлена). Операторы: >=  >  <=  <  ==  !=
+#             Время игры: %statistic_hours_played% (часы; расширение Statistic:
+#             /papi ecloud download Statistic). Без PlaceholderAPI это время
+#             считается по статистике Minecraft.
+#             message — своё сообщение (токены {value} {current}), необязательно.
+#
+#             requirements:
+#               - placeholder: "%statistic_hours_played%"
+#                 operator: ">="
+#                 value: "5"
+#               - placeholder: "%player_level%"
+#                 operator: ">="
+#                 value: "10"
+#                 message: "{text}Нужен {primary}10{text} уровень"
+#
+# В описании (lore) можно писать {playtime} — сколько часов наиграл игрок.
 
 rewards:
   daily:
@@ -52,6 +71,11 @@ rewards:
     glow: false
     lore:
       - "{text}Раз в неделю."
+      - "{text}Наиграно: {primary}{playtime} ч{muted}/5"
+    requirements:
+      - placeholder: "%statistic_hours_played%"
+        operator: ">="
+        value: "5"
     commands:
       - "[console] give {player} golden_apple 3"
       - "[broadcast] {secondary}{player}{primary} забрал недельную награду!"

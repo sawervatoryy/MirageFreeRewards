@@ -1,6 +1,7 @@
 name: MirageFreeRewards
-version: 1.0.0
+version: 0.1.1
 main: ru.mirage.freerewards.MirageFreeRewards
+softdepend: [PlaceholderAPI]
 api-version: '1.21'
 authors: [sawervatoryy]
 website: https://discord.gg/dWPenZegK
